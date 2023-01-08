@@ -27,11 +27,21 @@ public :
 		s << octets[0] << "." << octets[1] << "." << octets[2] << "." << octets[3];
 		std::string str = s.str();
 		return str;
-;	}
+	}
+
+	int octet(int id)
+	{
+		return octets[id];
+	}
 
 	int GetMaskCidr()
 	{
 		return cidrMask;
+	}
+
+	char GetIpClass()
+	{
+		return className;
 	}
 };
 

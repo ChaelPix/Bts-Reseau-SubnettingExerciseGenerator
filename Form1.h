@@ -550,7 +550,18 @@ namespace IPSlicer {
 		txtIP->Text = gcnew String(GetIPToString().c_str());
 		txtMask->Text = "/" + GetIPMask();
 		txtSousReseau->Text = "" + GetXNetwork();
-		MessageBox::Show("Nouvelle Adresse IP Générée");
+		MessageBox::Show("Nouvelle Adresse IP Générée : \n"
+		+ "Type adresse : " + GetIPType() + "\n"
+		+ "Routable ? : " + IsIpRoutable() + "\n"
+		+ "Classe de l'ip : " + gcnew Char(GetIpClass()) + "\n \n"
+		+ "Nouveau mask : " + gcnew String(GetNewMask().c_str()) + "\n"
+		+ "mask en / : " + GetNewMaskCidr() + "\n \n"
+		+ "Sous Reseau # : " + GetTargetSubNetwork() + "\n"
+		+ "Adresse reseau : " + gcnew String(GetSubnetAdress(0).c_str()) + "\n"
+		+ "Adresse Broadcast : " + gcnew String(GetSubnetAdress(1).c_str()) + "\n"
+		+ "Adresse First : " + gcnew String(GetSubnetAdress(2).c_str()) + "\n"
+		+ "Adresse Last : " + gcnew String(GetSubnetAdress(3).c_str()) + "\n"
+		);
 	}
 };
 }
