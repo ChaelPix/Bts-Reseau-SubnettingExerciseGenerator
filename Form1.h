@@ -721,7 +721,7 @@ private: System::Windows::Forms::Label^ txtNote;
 			this->MaximizeBox = false;
 			this->MinimizeBox = false;
 			this->Name = L"Form1";
-			this->Text = L"Exercice Réseau IPv4 : Découper en Sous-Réseau";
+			this->Text = L"Exercice Réseau IPv4 : Découper en Sous-Réseaux";
 			this->GBGenerator->ResumeLayout(false);
 			this->flowLayoutPanel1->ResumeLayout(false);
 			this->flowLayoutPanel1->PerformLayout();
