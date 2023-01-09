@@ -23,32 +23,14 @@ char RandomIPClass()
 	}
 }
 
-int RandomBit()
+char GetIpClass()
 {
-	return rand() % 255;
-}
-
-bool IsDefaultMask()
-{
-	return rand() % 2 == 0;
-}
-
-int SetBitsToAddOnMask()
-{
-	int x = 3;
-	if (xNetworks == 2) x = 1;
-	else if (xNetworks <= 4) x = 2;
-	return x;
+	return currentIp.GetIpClass();
 }
 
 std::string GetIPToString()
 {
 	return currentIp.IPstring();
-}
-
-int GetIPMask()
-{
-	return currentIp.GetMaskCidr();
 }
 
 int GetXNetwork()
@@ -80,6 +62,18 @@ int IsIpRoutable()
 	return isIt;
 }
 
+//-------IP Type (0: Reseau, 1: Machine, 2: Broadcast)
+#pragma region IPType
+std::string GetIpTypeCorrespondance(int id)
+{
+	switch (id)
+	{
+		case 1: return "Machine";
+		case 2: return "Broadcast";
+		default: return "Réseau";
+	}
+}
+
 int GetIPType()
 {
 	int ipType = 1; //0: Reseau, 1: Machine, 2: Broadcast
@@ -109,33 +103,30 @@ int GetIPType()
 
 	return ipType;
 }
+#pragma endregion
 
+//-------MASK
+#pragma region Mask
+int GetIPMask()
+{
+	return currentIp.GetMaskCidr();
+}
+bool IsDefaultMask()
+{
+	return rand() % 2 == 0;
+}
+
+int SetBitsToAddOnMask()
+{
+	int x = 3;
+	if (xNetworks == 2) x = 1;
+	else if (xNetworks <= 4) x = 2;
+	return x;
+}
 int GetNewMaskCidr()
 {
 	return currentIp.GetMaskCidr() + bitsToAddOnMask;
 }
-
-char GetIpClass()
-{
-	return currentIp.GetIpClass();
-}
-
-int GetTargetSubNetwork()
-{
-	return subnetToCheckId;
-}
-
-std::string GetSubnetAdress(int id)
-{
-	switch (id)
-	{
-	default: return networkAdress;
-	case 1: return broadcastAdress;
-	case 2: return firstAdress;
-	case 3: return lastAdress;
-	}
-}
-
 std::string GetNewMask()
 {
 	int cidr = GetNewMaskCidr();
@@ -151,6 +142,29 @@ std::string GetNewMask()
 		if (i > 0) newMask += ".";
 	}
 	return newMask;
+}
+#pragma endregion
+
+int RandomBit()
+{
+	return rand() % 255;
+}
+
+
+int GetTargetSubNetwork()
+{
+	return subnetToCheckId;
+}
+
+std::string GetSubnetAdress(int id)
+{
+	switch (id)
+	{
+	default: return networkAdress;
+	case 1: return broadcastAdress;
+	case 2: return firstAdress;
+	case 3: return lastAdress;
+	}
 }
 
 std::vector<char> SubnetBinary()
@@ -200,22 +214,22 @@ void SetupSubNetworkAdresses()
 	//Get informations about what to calcul next
 	int bitInNet = 32 - mask;
 	int xByteToModify = 1 + bitInNet / 8;
-	int subNet = bitInNet - ((bitInNet / 8) * 8) - bitsToAddOnMask;
+	int subNet = ((currentIp.GetMaskCidr() + 1) % 8) - 1;//bitInNet - ((bitInNet / 8) * 8) - bitsToAddOnMask;
 	if (subNet < 0)
 	{
 		xByteToModify--;
-		subNet = 8 + subNet;
+		subNet = 8 + subNet - 1;
 	}
-	
+
 	//Set the subnet to the Xth subnet choosen for the exercise
 	std::vector<char> subnetBin = SubnetBinary(); 
 	for (int i = 0; i < bitsToAddOnMask; i++)
 		ipBinary[4 - xByteToModify][subNet + i] = subnetBin[i];
 
 	//Set net at 0 to get network
-	for (i = subNet + bitsToAddOnMask; i < 8; i++)
+	for (i = (subNet + bitsToAddOnMask); i < 8; i++)
 		ipBinary[4 - xByteToModify][i] = '0';
-	for(i = 4 - xByteToModify; i < 4; i++)
+	for(i = 4 - xByteToModify + 1; i < 4; i++)
 		for (int j = 0; j < 8; j++)
 			ipBinary[i][j] = '0';
 
@@ -228,7 +242,7 @@ void SetupSubNetworkAdresses()
 	//Set net at 1 to get broadcast
 	for (i = subNet + bitsToAddOnMask; i < 8; i++)
 		ipBinary[4 - xByteToModify][i] = '1';
-	for (i = 4 - xByteToModify; i < 4; i++)
+	for (i = 4 - xByteToModify + 1; i < 4; i++)
 		for (int j = 0; j < 8; j++)
 			ipBinary[i][j] = '1';
 	broadcastAdress = BinaryToDotNotation(ipBinary[0], ipBinary[1], ipBinary[2], ipBinary[3]);
@@ -281,7 +295,7 @@ void SetupNewIP()
 	//currentIp = IP(193, 1, 1, 0, 'C', 24); //DEBUG
 	//currentIp = IP(122, 0, 0, 0, 'A', 10); //DEBUG
 	
-	xNetworks = rand() % 8 + 2;
+	xNetworks = rand() % 6 + 2;
 	bitsToAddOnMask = SetBitsToAddOnMask();
 	subnetToCheckId = rand() % (xNetworks - 1);
 
