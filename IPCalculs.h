@@ -38,7 +38,6 @@ int SetBitsToAddOnMask()
 	int x = 3;
 	if (xNetworks == 2) x = 1;
 	else if (xNetworks <= 4) x = 2;
-
 	return x;
 }
 
@@ -194,20 +193,23 @@ void SetupSubNetworkAdresses()
 	//Get IP in bin & Mask
 	std::string ipBinary[4];
 	for (i = 0; i < 4; i++)
-	{
 		ipBinary[i] = std::bitset<8>(currentIp.octet(i)).to_string();
-	}
+
 	int mask = GetNewMaskCidr();
 
 	//Get informations about what to calcul next
 	int bitInNet = 32 - mask;
-	int subNet = bitInNet - ((bitInNet / 8) * 8) - bitsToAddOnMask;
 	int xByteToModify = 1 + bitInNet / 8;
-
-
+	int subNet = bitInNet - ((bitInNet / 8) * 8) - bitsToAddOnMask;
+	if (subNet < 0)
+	{
+		xByteToModify--;
+		subNet = 8 + subNet;
+	}
+	
 	//Set the subnet to the Xth subnet choosen for the exercise
 	std::vector<char> subnetBin = SubnetBinary(); 
-	for (i = 0; i < bitsToAddOnMask; i++)
+	for (int i = 0; i < bitsToAddOnMask; i++)
 		ipBinary[4 - xByteToModify][subNet + i] = subnetBin[i];
 
 	//Set net at 0 to get network
@@ -238,49 +240,52 @@ void SetupSubNetworkAdresses()
 
 void SetupNewIP()
 {
-	srand(time(0)); //Random seed
-
 	char newIPClass = RandomIPClass();
 
 	//Generate a new IP Adress (not optimized at all)
+	bool isDefault = IsDefaultMask();
 	int oct0 = 0, oct1 = 0, oct2 = 0, oct3 = 0;
 	int mask = 0;
 	switch (newIPClass)
 	{
 	case 'A':
 		oct0 = rand() % 127 + 1;
-		mask = IsDefaultMask() ? 8 : rand() % 15 + 8;
+		mask = isDefault ? 8 : rand() % 5 + 8;
+		if (mask + bitsToAddOnMask == 14) mask--;
 		break;
 
 	case 'B':
-		oct0 = rand() % 191 + 128;
+		oct0 = rand() % 63 + 128;
 		oct1 = RandomBit();
 		if (oct0 != 191)
 		{
 			oct2 = RandomBit();
 			oct3 = RandomBit();
 		}
-		mask = IsDefaultMask() ? 16 : rand() % 23 + 16;
+		mask = isDefault ? 16 : rand() % 5 + 16;
 		break;
 
 	case 'C':
-		oct0 = rand() % 223 + 192;
+		oct0 = rand() % 31 + 192;
 		oct1 = RandomBit();
 		if (oct0 != 223)
 		{
 			oct2 = RandomBit();
 			oct3 = RandomBit();
 		}
-		mask = IsDefaultMask() ? 24 : rand() % 28 + 24;
+		mask = isDefault ? 24 : rand() % 4 + 24;
+		if (mask + bitsToAddOnMask == 22) mask--;
 	}
 
 	currentIp = IP(oct0, oct1, oct2, oct3, newIPClass, mask); //Update to the new IP adress
 	//currentIp = IP(193, 1, 1, 0, 'C', 24); //DEBUG
+	//currentIp = IP(122, 0, 0, 0, 'A', 10); //DEBUG
+	
 	xNetworks = rand() % 8 + 2;
 	bitsToAddOnMask = SetBitsToAddOnMask();
 	subnetToCheckId = rand() % (xNetworks - 1);
 
-	std::cout << "Nouvelle Adresse IP Générée : " << currentIp.IPstring() << "\n"
+	std::cout << "Nouvelle Adresse IP Generee : " << currentIp.IPstring() << "\n"
 		<< "Type adresse : " << GetIPType() << "\n"
 		<< "Routable ? : " << IsIpRoutable() << "\n"
 		<< "Classe de l'ip : " << GetIpClass() << "\n \n"
