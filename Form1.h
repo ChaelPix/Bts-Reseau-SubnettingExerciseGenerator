@@ -1,5 +1,7 @@
 #pragma once
-#include "IPCalculs.h"
+#include <iostream>
+#include <string>
+#include "Header.h"
 
 namespace IPSlicer {
 
@@ -847,7 +849,7 @@ private: System::Windows::Forms::Label^ txtNote;
 		}
 		else txtRepCIDR->Text = "Juste !";
 
-		//Question Adresse Reseau
+		//Question IP Reseau
 		rep = gcnew String(GetSubnetAdress(0).c_str());
 		if (repAdrReseau->Text != rep)
 		{
@@ -857,7 +859,7 @@ private: System::Windows::Forms::Label^ txtNote;
 		}
 		else txtRepAdrReseau->Text = "Juste !";
 
-		//Question Adresse Broadcast
+		//Question IP Broadcast
 		rep = gcnew String(GetSubnetAdress(1).c_str());
 		if (repAdrBroad->Text != rep)
 		{
@@ -867,7 +869,7 @@ private: System::Windows::Forms::Label^ txtNote;
 		}
 		else txtRepAdrBroad->Text = "Juste !";
 
-		//Question Adresse 1ere machine
+		//Question IP 1ere machine
 		rep = gcnew String(GetSubnetAdress(2).c_str());
 		if (repFirstIP->Text != rep)
 		{
@@ -877,7 +879,7 @@ private: System::Windows::Forms::Label^ txtNote;
 		}
 		else txtRepAdr1->Text = "Juste !";
 
-		//Question Adresse last machine
+		//Question IP last machine
 		rep = gcnew String(GetSubnetAdress(3).c_str());
 		if (repLastIP->Text != rep)
 		{
