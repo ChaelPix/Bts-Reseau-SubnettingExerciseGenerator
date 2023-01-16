@@ -148,17 +148,17 @@ int IsIpRoutable()
 	switch (currentIp.GetIpClass())
 	{
 	case 'A':
-		if (currentIp.octet(0) == 10 && currentIp.GetMaskCidr() == 8) //10.0.0.0 à 10.255.255.255
+		if (currentIp.octet(0) == 10) //10.0.0.0 à 10.255.255.255
 			isIt = 0;
 		break;
 
 	case 'B':
-		if (currentIp.octet(0) == 172 && currentIp.octet(1) >= 16 && currentIp.octet(1) <= 32 && currentIp.GetMaskCidr() == 16) //172.16.0.0 à 172.31.255.255
+		if (currentIp.octet(0) == 172 && currentIp.octet(1) >= 16 && currentIp.octet(1) <= 31) //172.16.0.0 à 172.31.255.255
 			isIt = 0;
 		break;
 
 	case 'C':
-		if (currentIp.octet(0) == 192 && currentIp.octet(1) == 168 && currentIp.GetMaskCidr() == 24) //192.168.0.0 à 192.168.255.255
+		if (currentIp.octet(0) == 192 && currentIp.octet(1) == 168) //192.168.0.0 à 192.168.255.255
 			isIt = 0;
 	}
 
